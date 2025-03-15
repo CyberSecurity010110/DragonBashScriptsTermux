@@ -1,0 +1,4 @@
+echo "* text=auto eol=lf" >
+.gitattributes
+ecgo "*.sh text eol=lf" >>
+.gitattributes
