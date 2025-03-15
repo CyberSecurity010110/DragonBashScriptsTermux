@@ -1,8 +1,37 @@
 #!/bin/bash
 
+# Function to check Java version
+check_java_version() {
+    if command -v java &>/dev/null; then
+        java_version=$(java -version 2>&1 | head -n 1 | awk -F '"' '{print $2}' | sed 's/^1\.//')
+        echo "Java version detected: $java_version"
+        if [[ "$java_version" -ge 11 ]]; then
+            echo "Compatible Java version found."
+        else
+            echo "Java version is too old. Installing OpenJDK 11..."
+            install_java
+        fi
+    else
+        echo "Java not found. Installing OpenJDK 11..."
+        install_java
+    fi
+}
+
+# Function to install OpenJDK 11
+install_java() {
+    pkg install -y openjdk-11
+    export JAVA_HOME=$(dirname $(dirname $(realpath $(which java))))
+    echo "export JAVA_HOME=$JAVA_HOME" >> ~/.bashrc
+    echo "export PATH=\$PATH:$JAVA_HOME/bin" >> ~/.bashrc
+    source ~/.bashrc
+}
+
 # Install necessary packages
 pkg update && pkg upgrade -y
-pkg install -y ndk-sysroot clang wget openjdk-11 unzip
+pkg install -y ndk-sysroot clang wget unzip
+
+# Check and install Java if needed
+check_java_version
 
 # Install Precompiled NDK (optimized for aarch64)
 mkdir -p ~/android-ndk
