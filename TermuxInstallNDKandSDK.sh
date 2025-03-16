@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "being update this version is not fully working yet"
 # Function to check Java version
 check_java_version() {
     if command -v java &>/dev/null; then
